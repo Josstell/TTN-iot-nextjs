@@ -1,4 +1,7 @@
+"use client";
+
 import { type Metadata } from "next";
+import React from "react";
 import {
   DownloadIcon,
   FilterIcon,
@@ -21,12 +24,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnalyticsDatePicker } from "@/app/dashboard/components/analytics-date-picker";
 
 import { ProductsTable } from "@/app/dashboard/components/products-table";
-import { ChartAreaInteractive } from "./components/chart-area-interactive";
+// import { ChartAreaInteractive } from "./components/chart-area-interactive";
+import { ChartLineInteractive } from "./components/chart-line-interactive";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "An example dashboard to test the new components.",
-};
+import type { TTNUplinkResponse } from "@/types/ttn-uplink";
+
+// export const metadata: Metadata = {
+//   title: "Dashboard",
+//   description: "An example dashboard to test the new components.",
+// };
+
+interface CleanUplink {
+  device: string;
+  temperature?: number;
+  humidity?: number;
+  time: string;
+}
 
 // Load from database.
 const products = [
@@ -113,6 +126,40 @@ const products = [
 ];
 
 export default function DashboardPage() {
+  const [messages, setMessages] = React.useState<CleanUplink[]>([]);
+
+  React.useEffect(() => {
+    const eventSource = new EventSource("/api/ttn/temphum");
+
+    eventSource.onmessage = (event: MessageEvent<string>) => {
+      console.log("Evento recibido:", event.data);
+      try {
+        const parsed: TTNUplinkResponse = JSON.parse(event.data);
+
+        const payload = parsed.result.uplink_message.decoded_payload;
+        if (!payload) return;
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            device: parsed.result.end_device_ids.device_id,
+            temperature: payload.temperature,
+            humidity: payload.humidity,
+            time: parsed.result.uplink_message.received_at,
+          },
+        ]);
+      } catch (err) {
+        console.warn("Evento no válido:", err);
+      }
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, []);
+
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
       <Tabs defaultValue="overview" className="gap-6">
@@ -192,9 +239,9 @@ export default function DashboardPage() {
             </Card>
           </div>
           <div className="grid grid-cols-1">
-            <ChartAreaInteractive />
+            <ChartLineInteractive messages={messages} />
           </div>
-          <ProductsTable products={products} />
+          <ProductsTable dataTempHum={messages} />
         </TabsContent>
       </Tabs>
     </div>

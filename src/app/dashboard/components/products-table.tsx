@@ -46,18 +46,14 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function ProductsTable({
-  products,
-}: {
-  products: {
-    id: string;
-    name: string;
-    price: number;
-    stock: number;
-    dateAdded: string;
-    status: string;
-  }[];
-}) {
+interface CleanUplink {
+  device: string;
+  temperature?: number;
+  humidity?: number;
+  time: string;
+}
+
+export function ProductsTable({ dataTempHum }: { dataTempHum: CleanUplink[] }) {
   return (
     <Card className="flex w-full flex-col gap-4">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -125,42 +121,31 @@ export function ProductsTable({
               <TableHead className="w-12 px-4">
                 <Checkbox />
               </TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-right">Stock</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date Added</TableHead>
+              <TableHead>Temperatura</TableHead>
+              <TableHead>Humedad</TableHead>
+              <TableHead>Fecha y hora</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody className="**:data-[slot=table-cell]:py-2.5">
-            {products.map((product) => (
-              <TableRow key={product.id}>
+            {dataTempHum.map((data) => (
+              <TableRow key={data.time}>
                 <TableCell className="px-4">
                   <Checkbox />
                 </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell className="text-right">
-                  ${product.price.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-right">{product.stock}</TableCell>
+
+                <TableCell>{data.temperature ?? "N/A"}</TableCell>
+                <TableCell>{data.humidity}</TableCell>
+
                 <TableCell>
-                  <Badge
-                    variant="secondary"
-                    className={
-                      product.status === "Low Stock"
-                        ? "border-orange-700 bg-transparent text-orange-700 dark:border-orange-700 dark:bg-transparent dark:text-orange-700"
-                        : "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-100"
-                    }
-                  >
-                    {product.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {new Date(product.dateAdded).toLocaleDateString("en-US", {
-                    month: "long",
+                  {new Date(data.time).toLocaleString("es-MX", {
+                    timeZone: "America/Mexico_City",
+                    month: "short",
                     day: "numeric",
                     year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
                   })}
                 </TableCell>
                 <TableCell>
