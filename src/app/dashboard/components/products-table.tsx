@@ -56,7 +56,7 @@ interface CleanUplink {
 export function ProductsTable({ dataTempHum }: { dataTempHum: CleanUplink[] }) {
   return (
     <Card className="flex w-full flex-col gap-4">
-      <CardHeader className="flex flex-row items-center justify-between">
+      {/* <CardHeader className="flex flex-row items-center justify-between">
         <Tabs defaultValue="all">
           <TabsList className="w-full @3xl/page:w-fit">
             <TabsTrigger value="all">All Products</TabsTrigger>
@@ -113,7 +113,7 @@ export function ProductsTable({ dataTempHum }: { dataTempHum: CleanUplink[] }) {
             <ArrowUpDownIcon />
           </Button>
         </div>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent>
         <Table>
           <TableHeader>
@@ -168,7 +168,7 @@ export function ProductsTable({ dataTempHum }: { dataTempHum: CleanUplink[] }) {
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter className="flex flex-col items-center justify-between border-t pt-6 @3xl/page:flex-row">
+      {/* <CardFooter className="flex flex-col items-center justify-between border-t pt-6 @3xl/page:flex-row">
         <div className="text-muted-foreground hidden text-sm @3xl/page:block">
           Showing 1-10 of 100 products
         </div>
@@ -196,7 +196,7 @@ export function ProductsTable({ dataTempHum }: { dataTempHum: CleanUplink[] }) {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

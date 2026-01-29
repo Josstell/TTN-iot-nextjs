@@ -66,7 +66,7 @@ export function ChartLineInteractive({ messages }: { messages: CleanUplink[] }) 
         </div>
         <div className="flex">
           {["temperature", "humidity"].map((key) => {
-            const chart = key as keyof typeof chartConfig;
+            const chart = key as "temperature" | "humidity";
             return (
               <button
                 key={chart}
@@ -75,10 +75,10 @@ export function ChartLineInteractive({ messages }: { messages: CleanUplink[] }) 
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-muted-foreground text-[10px]">
-                  {chartConfig[chart].label === "Temperature" ? "Temperatura" : "Humedad"}
+                  {chartConfig[chart].label}
                 </span>
                 <span className="text-lg leading-none font-bold sm:text-xl -ml-2">
-                  {messages[messages.length - 1]?.[chart as keyof CleanUplink] ?? 0} {chartConfig[chart].label === "Temperature" ? "°C" : "%"}
+                  {messages[messages.length - 1]?.[chart] ?? 0} {chart === "temperature" ? "°C" : "%"}
                 </span>
                
               </button>
