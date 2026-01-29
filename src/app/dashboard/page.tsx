@@ -160,6 +160,22 @@ export default function DashboardPage() {
     return () => eventSource.close();
   }, []);
 
+  const temperatures = messages
+    .map((m) => m.temperature)
+    .filter((t): t is number => typeof t === "number");
+  const maxTemp = temperatures.length > 0 ? Math.max(...temperatures) : 0;
+  const minTemp = temperatures.length > 0 ? Math.min(...temperatures) : 0;
+  const percentageRise =
+    minTemp !== 0 ? ((maxTemp - minTemp) / Math.abs(minTemp)) * 100 : 0;
+
+  const humidities = messages
+    .map((m) => m.humidity)
+    .filter((h): h is number => typeof h === "number");
+  const maxHum = humidities.length > 0 ? Math.max(...humidities) : 0;
+  const minHum = humidities.length > 0 ? Math.min(...humidities) : 0;
+  const percentageHum =
+    minHum !== 0 ? ((maxHum - minHum) / Math.abs(minHum)) * 100 : 0;
+
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
       <Tabs defaultValue="overview" className="gap-6">
@@ -191,49 +207,49 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader>
-                <CardTitle>Total Revenue</CardTitle>
-                <CardDescription>$1,250.00 in the last 30 days</CardDescription>
+                <CardTitle>Temperatura Maxima</CardTitle>
+                <CardDescription>{maxTemp.toFixed(2)} °C</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
                   <TrendingUpIcon />
-                  +12.5%
+                  +{percentageRise.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>New Customers</CardTitle>
-                <CardDescription>-12 customers from last month</CardDescription>
+                <CardTitle>Temperatura Minima</CardTitle>
+                <CardDescription>{minTemp.toFixed(2)} °C</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
                   <TrendingDownIcon />
-                  -20%
+                  -{percentageRise.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Active Accounts</CardTitle>
-                <CardDescription>+2,345 users from last month</CardDescription>
+                <CardTitle>Humedad Maxima</CardTitle>
+                <CardDescription>{maxHum.toFixed(2)}%</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
                   <TrendingUpIcon />
-                  +12.5%
+                  +{percentageHum.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Growth Rate</CardTitle>
-                <CardDescription>+12.5% increase per month</CardDescription>
+                <CardTitle>Humedad Minima</CardTitle>
+                <CardDescription>{minHum.toFixed(2)}%</CardDescription>
               </CardHeader>
               <CardFooter>
                 <Badge variant="outline">
-                  <TrendingUpIcon />
-                  +4.5%
+                  <TrendingDownIcon />
+                  -{percentageHum.toFixed(1)}%
                 </Badge>
               </CardFooter>
             </Card>

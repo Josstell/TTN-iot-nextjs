@@ -33,11 +33,11 @@ const chartConfig = {
     label: "Page Views",
   },
   temperature: {
-    label: "Temperature",
+    label: "Temperatura",
     color: "var(--chart-1)",
   },
   humidity: {
-    label: "Humidity",
+    label: "Humedad",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -59,9 +59,9 @@ export function ChartLineInteractive({ messages }: { messages: CleanUplink[] }) 
     <Card className="py-4 sm:py-0">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
-          <CardTitle>Line Chart - Interactive</CardTitle>
+          <CardTitle>Temperatura y Humedad</CardTitle>
           <CardDescription>
-            Showing total visitors for the last 3 months
+            Mostrando la temperatura y humedad para el último día
           </CardDescription>
         </div>
         <div className="flex">
@@ -74,12 +74,13 @@ export function ChartLineInteractive({ messages }: { messages: CleanUplink[] }) 
                 className="data-[active=true]:bg-muted/50 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
-                <span className="text-muted-foreground text-xs">
-                  {chartConfig[chart].label}
+                <span className="text-muted-foreground text-[10px]">
+                  {chartConfig[chart].label === "Temperature" ? "Temperatura" : "Humedad"}
                 </span>
-                <span className="text-lg leading-none font-bold sm:text-3xl">
-                  total
+                <span className="text-lg leading-none font-bold sm:text-xl -ml-2">
+                  {messages[messages.length - 1]?.[chart as keyof CleanUplink] ?? 0} {chartConfig[chart].label === "Temperature" ? "°C" : "%"}
                 </span>
+               
               </button>
             );
           })}
@@ -117,7 +118,7 @@ export function ChartLineInteractive({ messages }: { messages: CleanUplink[] }) 
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  // nameKey="views"
+                  //nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleString("es-MX", {
                       timeZone: "America/Mexico_City",
